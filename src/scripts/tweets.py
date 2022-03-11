@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from random import randint
 import tweepy
 from settings import load_env
 
@@ -13,6 +14,7 @@ bearer_token = os.environ.get("TWITTER_BEARER_TOKEN")
 
 
 INTERRESTING_COLUMNS = ['id', "text", "lang", "created_at"]
+TOPICS = ["covid", "cooking", "sports", "war", "politics", "journalism", "movie", "technology", "music", "beauty"]
 
 
 def twitter_client_authentification():
@@ -61,9 +63,11 @@ def search_tweets(client, termes_a_rechercher, tweet_fields, max_results=10, sav
     # Filtres pour la recherche
     no_media = " -has:media"
     no_retweet = " -is:retweet"
+    no_reply = " -is:reply"
+    no_link = " -has:links"
     in_english = " lang:en"
 
-    query = termes_a_rechercher + no_media + no_retweet + in_english
+    query = termes_a_rechercher + no_media + no_retweet + no_reply + no_link + in_english
     reponse = client.search_recent_tweets(query=query,  max_results=max_results, tweet_fields=tweet_fields)
 
     df = response_to_dataframe(reponse)
@@ -74,8 +78,31 @@ def search_tweets(client, termes_a_rechercher, tweet_fields, max_results=10, sav
     return df
 
 
-if __name__ == "__main__":
+def create_benchmark(topics):
+    client = twitter_client_authentification()
 
-    twitter_client = twitter_client_authentification()
-    response = search_tweets(twitter_client, "covid", tweet_fields=INTERRESTING_COLUMNS)
-    print(response)
+    benchmark_columns = INTERRESTING_COLUMNS.copy().append('label')
+    benchmark = pd.DataFrame(columns=benchmark_columns)
+
+    for topic in topics:
+        # On choisit un nombre aléatoire entre 10 et 100 pour ne pas avoir uniquement des classes homogènes
+        rand_number = randint(10, 100)
+        print(f"topic : {topic} - rand_number : {rand_number}")
+
+        # On crée un dataframe de tweets contenant le topic
+        df = search_tweets(client, topic, max_results=rand_number, tweet_fields=INTERRESTING_COLUMNS, save_result=False)
+
+        # On ajoute une colonne 'label' pour specifier à quel topic appartiennent ces tweets
+        df['label'] = topic  # le topic sera répété pour toutes les lignes de df
+
+        # On concatene les tweets avec le benchmark
+        benchmark = pd.concat([benchmark, df])
+
+    return benchmark
+
+
+if __name__ == "__main__":
+    df = create_benchmark(TOPICS)
+    df.to_csv("benchmark.csv")
+
+
