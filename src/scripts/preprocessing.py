@@ -57,7 +57,7 @@ def clean_texts(texts, stop_words, emojis):
         # Suppression des emojis
         text = re.sub(emojis, '', text)
 
-        # Suppression des texts contenant moins de 5 mots
+        # Suppression des textes contenant moins de 5 mots
         if len(text.split(" ")) < 5:
             continue
 
@@ -67,12 +67,20 @@ def clean_texts(texts, stop_words, emojis):
 
 
 def bag_of_words(texts, as_array=False):
-    bow = csr_matrix(CountVectorizer().fit_transform(texts))
+    cv = CountVectorizer()
+    bow = csr_matrix(cv.fit_transform(texts))
+    feature_names = cv.get_feature_names()
 
     if as_array:
-        return bow.toarray()
+        return [bow.toarray(), feature_names]
 
-    return bow
+    return [bow, feature_names]
+
+
+def preprocess(texts):
+    cleaned_texts = clean_texts(texts, stop_words, emojis)
+    bow, feature_names = bag_of_words(cleaned_texts, as_array=False)
+    return [bow, feature_names]
 
 
 if __name__ == "__main__":
@@ -86,6 +94,8 @@ if __name__ == "__main__":
     print(cleaned_texts[:2])
     print(f"Taille textes nettoyés : {len(cleaned_texts)}\n")
 
-    bow = bag_of_words(cleaned_texts, as_array=False)
+    bow, feature_names = bag_of_words(cleaned_texts, as_array=False)
     print(f"Shape matrice bag of words : {bow.shape}")
+    print(f"Taille vocabulaire : {len(feature_names)}")
+    print(feature_names)
 
