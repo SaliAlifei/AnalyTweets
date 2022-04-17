@@ -1,2 +1,9 @@
+# Ignorer ces fichiers
 .idea
 *.csv
+*.txt
+*.png
+
+# Garder ceux-là
+!data/resultats_shuflled_0_a_300.csv
+!data/statelatlong.csv

@@ -35,10 +35,13 @@ emojis = re.compile("["
                     "]+", re.UNICODE)
 
 
-def clean_texts(texts, stop_words, emojis):
+def clean_texts(texts, stop_words=stop_words, emojis=emojis):
     cleaned_texts = []
 
     for text in texts:
+        # Suppression des url
+        text = re.sub(r'https?://\S+|www\.\S', '', text)
+
         # Suppression des ponctuations
         punctuations = r'''!()-[]{};:'"\,<>./?@#$%^&*_~'''
         for character in text.lower():
@@ -58,8 +61,8 @@ def clean_texts(texts, stop_words, emojis):
         text = re.sub(emojis, '', text)
 
         # Suppression des textes contenant moins de 5 mots
-        if len(text.split(" ")) < 5:
-            continue
+        # if len(text.split(" ")) < 5:
+        #    continue
 
         cleaned_texts.append(text)
 
@@ -84,9 +87,11 @@ def preprocess(texts):
 
 
 if __name__ == "__main__":
-    path_to_test_file = "C:/Users/salim/Documents/Cours/PPD/AnalyTweets/data/benchmark.csv"
+    path_to_test_file = "../../data/resultats/shuflled_0_a_300.csv"
 
-    texts = pd.read_csv(path_to_test_file)['text'].values
+    df = pd.read_csv(path_to_test_file)
+    texts = df['text'].values
+
     print(texts[:2])
     print(f"Taille textes départ : {len(texts)}\n")
 
@@ -94,8 +99,13 @@ if __name__ == "__main__":
     print(cleaned_texts[:2])
     print(f"Taille textes nettoyés : {len(cleaned_texts)}\n")
 
+    df.loc[:, "cleaned_texts"] = cleaned_texts
+    df.to_csv("../../data/resultats_shuflled_0_a_300.csv")
+
+    """
     bow, feature_names = bag_of_words(cleaned_texts, as_array=False)
     print(f"Shape matrice bag of words : {bow.shape}")
     print(f"Taille vocabulaire : {len(feature_names)}")
     print(feature_names)
+    """
 

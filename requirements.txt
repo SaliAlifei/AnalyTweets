@@ -4,3 +4,12 @@ pandas
 nltk
 scikit-learn
 scipy
+dash
+wordcloud
+dash_canvas
+plotly
+dash_extensions
+dash_bootstrap_components
+dash-dangerously-set-inner-html
+dash_defer_js_import
+dash_leaflet
