@@ -1,0 +1,20 @@
+intéressant de choisir le nombre de topics 5-10
+
+on peut ajouter une api qui récupère les tweets
+
+étude de setiments par temps et états avec text blob
+
+nuage de mots, classifications de tweets
+
+garder ou elever les emojis ?
+
+exploiter, analyser, topics par états
+
+
+1 - nettoyage (Sania)
+2 - étude exploratoire et analyse des sentiments
+3 - LDA et NMF (nombre de topics, nombre de mots, paramètres modèle)
+
+python dash tweet
+
+supprimer moins de 5 minutes
