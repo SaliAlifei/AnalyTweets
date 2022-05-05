@@ -1,6 +1,0 @@
-python-dotenv
-tweepy
-pandas
-nltk
-scikit-learn
-scipy
