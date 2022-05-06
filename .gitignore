@@ -3,7 +3,8 @@
 *.csv
 *.txt
 *.png
+/venv
 
 # Garder ceux-là
-!data/resultats_shuflled_0_a_300.csv
-!data/statelatlong.csv
+!data/cleaned_resultats.csv
+!data/data_map.csv

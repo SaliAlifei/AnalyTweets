@@ -1,0 +1,54 @@
+from dash import html, dash_table
+from styles import *
+from dash import dcc
+
+nettoyage_donnees = html.Div(id="nettoyage_donnees_container",
+                             style=nettoyage_donnees_container_style,
+                             children=[
+                                 html.Div(id="nettoyage_donnees_sidebar",
+                                          style=nettoyage_donnees_sidebar_style,
+                                          children=[
+                                              html.H2(children='Data cleaning',
+                                                      style=nettoyage_donnees_title_style),
+
+                                              html.Label('Preprocessing techniques :',
+                                                         style=nettoyage_donnees_subtitle_style),
+
+                                              dcc.Checklist(
+                                                  ['links', 'lowercase', 'punctuations', 'hashtags', 'mentions',
+                                                   'emojis', 'stemming', 'lemmatization', 'stop word', 'contractions',
+                                                   'few words'],
+                                                  ['links', 'lowercase'],
+                                                  id="my-checklist",
+                                                  style=nettoyage_donnees_checklist_style,
+                                                  labelStyle={'display': 'block'},
+                                                  inputStyle={"margin-right": "5px"},
+                                                  persistence=True,
+                                                  persistence_type='session'
+                                              ),
+
+                                              html.Button('Sentiments analysis', id='my-button-sentiments', n_clicks=0,
+                                                          style=nettoyage_donnees_sentiment_button_style),
+
+                                              html.Button('Topic modeling', id='my-button-lda', n_clicks=0,
+                                                          style=nettoyage_donnees_sentiment_button_style)
+
+                                          ]),
+
+                                 html.Div(id="nettoyage_donnees_table",
+                                          style=nettoyage_donnees_table_style,
+                                          children=[
+                                              dash_table.DataTable(
+                                                  id='my-table',
+                                                  data=[],
+                                                  page_size=15,
+                                                  style_data={
+                                                      'whiteSpace': 'normal',
+                                                      'height': 'auto',
+                                                  },
+                                                  style_cell={'textAlign': 'left'},
+                                                  style_as_list_view=True
+                                              )
+                                          ]),
+
+                             ])

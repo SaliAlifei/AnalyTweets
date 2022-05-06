@@ -13,3 +13,7 @@ dash_bootstrap_components
 dash-dangerously-set-inner-html
 dash_defer_js_import
 dash_leaflet
+TwitterAPI
+contractions
+gensim
+pyLDAvis

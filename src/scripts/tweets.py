@@ -6,7 +6,7 @@ import pandas as pd
 from random import randint
 import tweepy
 from settings import load_env
-from TwitterAPI import TwitterAPI, TwitterOAuth
+from TwitterAPI import TwitterAPI
 
 load_env()
 
@@ -16,8 +16,8 @@ access_token = os.environ.get("TWITTER_ACCESS_TOKEN")
 access_token_secret = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
 bearer_token = os.environ.get("TWITTER_BEARER_TOKEN")
 
-INTERRESTING_COLUMNS = ['id', "text", "lang", "created_at"]
-DATASET_COLUMNS = ['id', "text", "lang", "created_at", "state", "city", "latitude", 'longitude']
+INTERRESTING_COLUMNS = ['id', "text", "lang", "created_at", "geo"]
+DATASET_COLUMNS = ['id', "text", "lang", "created_at", "geo", "state", "city" 'longitude', 'latitude']
 TOPICS = ["covid", "cooking", "sports", "war", "politics", "journalism", "movie", "technology", "music", "beauty"]
 
 
@@ -64,16 +64,64 @@ def get_tweet_by_id(client, tweet_id, with_geo=True):
                 place = retrieved_tweet.includes['places'][0]
                 bbox = place['geo']['bbox']
                 city, state = place['full_name'].split(", ")
-                latitude = bbox[0]
-                longitude = bbox[1]
+                latitude = bbox[1]
+                longitude = bbox[0]
             except Exception as e:
                 print(e)
 
             tweet.append(state)
             tweet.append(city)
-            tweet.append(latitude)
             tweet.append(longitude)
+            tweet.append(latitude)
+
     return tweet
+
+
+def get_tweets_by_id_with_geo(client, list_id):
+    retrieved_tweets = client.get_tweets(list_id, tweet_fields=INTERRESTING_COLUMNS,
+                                         place_fields=['country', 'country_code', 'full_name', 'geo', 'id', 'name',
+                                                       'place_type'],
+                                         expansions="geo.place_id")
+    data = retrieved_tweets.data
+    tweet_includes = retrieved_tweets.includes['places']
+
+    if len(data) == 0:
+        print(f"Aucun des tweets de la liste donnée n'existe")
+
+    # Extract list of place_id from tweets data
+    data_place_ids = [tweet['geo']['place_id'] if tweet['geo'] else "nothing" for tweet in data]
+
+    # Extract place_id from data includes
+    include_place_ids = [place['id'] for place in retrieved_tweets.includes['places']]
+
+    tweets = []
+    for i in range(len(data)):
+        tweet_data = data[i]
+        if data_place_ids[i] == "nothing":
+            state, city, latitude, longitude = ["NA", "NA", 0, 0]
+        elif data_place_ids[i] in include_place_ids:
+            include_id = include_place_ids.index(data_place_ids[i])
+            place = tweet_includes[include_id]
+            bbox = place['geo']['bbox']
+            city = place['full_name'].split(", ")[0]
+            state = place['full_name'].split(", ")[1]
+            latitude = bbox[1]
+            longitude = bbox[0]
+        else:
+            state, city, latitude, longitude = ["NA", "NA", 0, 0]
+
+        tweet = []
+        for col in INTERRESTING_COLUMNS:
+            tweet.append(tweet_data[col])
+
+        tweet.append(state)
+        tweet.append(city)
+        tweet.append(longitude)
+        tweet.append(latitude)
+
+        tweets.append(tweet)
+
+    return pd.DataFrame(tweets, columns=DATASET_COLUMNS)
 
 
 def get_tweets_by_id(client, list_id, with_geo=True):
@@ -180,24 +228,44 @@ def create_benchmark_from_id_file(file_path):
     # Lire le fichier des ids
     ids = list(pd.read_csv(file_path)['Tweet_ID'].values)
     random.shuffle(ids)
-    ids = ids[:300]
+    ids = ids[610000:]
 
     # Authentification api
     client = twitter_client_authentification()
 
-    decoupage = np.linspace(0, len(ids), 2, dtype=int)
+    decoupage = np.arange(0, len(ids), 99)
 
-    for i in range(len(decoupage)-1):
-        print("Tweets de " + str(decoupage[i]) + " à " + str(decoupage[i+1]))
-        list_ids = [str(x) for x in ids[decoupage[i]:decoupage[i+1]]]
-        df = get_tweets_by_id(client, list_ids, with_geo=True)
-        df.to_csv("../../data/resultats/shuflled_" + str(decoupage[i]) + "_a_" + str(decoupage[i+1]) + ".csv")
+    df_results = pd.DataFrame()
+    n = 10000
+
+    for i in range(len(decoupage) - 1):
+        print("Tweets de " + str(decoupage[i]) + " à " + str(decoupage[i + 1]))
+        list_ids = [str(x) for x in ids[decoupage[i]:decoupage[i + 1]]]
+        df_result_tmp = get_tweets_by_id_with_geo(client, list_ids)
+
+        df_results = pd.concat([df_results, df_result_tmp])
+
+        if decoupage[i] >= n:
+            df_results.to_csv("../../data/resultats/results_" + str(n+610000) + ".csv")
+            n += 10000
+
+    return df_results
 
 
 if __name__ == "__main__":
-    """
-    base_path = "../../data/covid/"
-    df = create_benchmark_from_ids(base_path)
-    """
-    path = "../../data/Tweets_United_States.csv"
-    create_benchmark_from_id_file(path)
+    # path = "../../data/Tweets_United_States.csv"
+    # df = create_benchmark_from_id_file(path)
+    # df.to_csv("../../data/results.csv")
+
+    df_results = pd.DataFrame()
+    results_dir = os.listdir("../../data/resultats/")
+    for res in results_dir:
+        if res.split(".")[1] == "csv":
+            df_res = pd.read_csv("../../data/resultats/" + res)
+            df_res = df_res.drop(columns=['Unnamed: 0'])
+            df_results = pd.concat([df_results, df_res])
+
+    df_results.drop_duplicates(subset=['id'], keep='last')
+    df_results = df_results.sample(frac=1).reset_index(drop=True)
+    df_results.to_csv("../../data/results.csv")
+

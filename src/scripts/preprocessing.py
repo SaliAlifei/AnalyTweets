@@ -5,6 +5,7 @@ from scipy.sparse import csr_matrix
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+nltk.download("omw-1.4", quiet=True)
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 
@@ -87,7 +88,7 @@ def preprocess(texts):
 
 
 if __name__ == "__main__":
-    path_to_test_file = "../../data/resultats/shuflled_0_a_300.csv"
+    path_to_test_file = "../../data/results.csv"
 
     df = pd.read_csv(path_to_test_file)
     texts = df['text'].values
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     print(f"Taille textes nettoyés : {len(cleaned_texts)}\n")
 
     df.loc[:, "cleaned_texts"] = cleaned_texts
-    df.to_csv("../../data/resultats_shuflled_0_a_300.csv")
+    df.to_csv("../../data/cleaned_resultats.csv")
 
     """
     bow, feature_names = bag_of_words(cleaned_texts, as_array=False)
