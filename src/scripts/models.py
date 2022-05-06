@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.decomposition import NMF, LatentDirichletAllocation
-from preprocessing import preprocess
+from src.scripts.preprocessing import preprocess
 
 
 def nmf(X, k, init='random', random_state=0):
@@ -40,16 +40,8 @@ if __name__ == "__main__":
     X, feature_names = preprocess(texts)
 
     lda_model, resultat_lda = lda(X, k)
-    # print(f"Result : {resultat_lda.shape}\n{resultat_lda}\n")
 
     nmf_model, w, h = nmf(X, k)
-    # print(f'------> Matrice W : {w.shape}\n{w}\n')
-    # print(f'------> Matrice H : {h.shape}\n{h}')
-
-    # print("\n\n ----------------- \n\n")
-
-    # print(f"NMF conponents : {nmf_model.components_.shape} \n{nmf_model.components_}\n\n")
-    # print(f"LDA conponents : {lda_model.components_.shape} \n{lda_model.components_}\n\n")
 
     print("\n\n ----------------- \n\n")
 

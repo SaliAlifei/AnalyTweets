@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 # Chemin absolu vers le fichier env_var.env de parm
-PATH_TO_ENV_FILE = "C:/Users/salim/Documents/Cours/PPD/AnalyTweets/parm/env_var.env"
+PATH_TO_ENV_FILE = "C:/Users/Salimata/Documents/Projets/AnalyTweets/parm/env_var.env"
 
 
 def load_env():
