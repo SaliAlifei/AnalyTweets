@@ -5,6 +5,7 @@ from scipy.sparse import csr_matrix
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from settings import UNINTERRESTING_WORDS
 nltk.download("omw-1.4", quiet=True)
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
@@ -36,7 +37,7 @@ emojis = re.compile("["
                     "]+", re.UNICODE)
 
 
-def clean_texts(texts, stop_words=stop_words, emojis=emojis):
+def clean_texts(texts, stop_words=stop_words, emojis=emojis, delete_sup_words=False):
     cleaned_texts = []
 
     for text in texts:
@@ -53,6 +54,10 @@ def clean_texts(texts, stop_words=stop_words, emojis=emojis):
 
         # Suppression des stopwords
         text = ' '.join([word for word in text.split() if word not in stop_words])
+
+        if delete_sup_words:
+            # Suppression des mots supplementaires
+            text = ' '.join([word for word in str(text).split() if word not in UNINTERRESTING_WORDS])
 
         # Suppression des chiffres
         text = re.sub(r'[0-9]+', '', text)
