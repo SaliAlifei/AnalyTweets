@@ -34,14 +34,7 @@ nettoyage_donnees = html.Div(id="nettoyage_donnees_container",
                                                   inputStyle={"margin-right": "5px"},
                                                   persistence=True,
                                                   persistence_type='session'
-                                              ),
-
-                                              html.Button('Sentiments analysis', id='my-button-sentiments', n_clicks=0,
-                                                          style=nettoyage_donnees_sentiment_button_style),
-
-                                              html.Button('Topic modeling', id='my-button-lda', n_clicks=0,
-                                                          style=nettoyage_donnees_sentiment_button_style)
-
+                                              )
                                           ]),
 
                                  html.Div(id="nettoyage_donnees_table",

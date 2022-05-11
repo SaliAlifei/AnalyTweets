@@ -47,7 +47,7 @@ app.layout = html.Div([
                     nettoyage_donnees
                 ]),
 
-        dcc.Tab(label='Analyse des sentiments',
+        dcc.Tab(label='Analyse spatio-temporelle',
                 style=tab_style,
                 selected_style=selected_tab_style,
                 children=[

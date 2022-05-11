@@ -10,7 +10,7 @@ from src.scripts.tweets import get_tweet_by_id, twitter_client_authentification
 from src.scripts.preprocessing import preprocess, clean_texts
 from src.scripts.models import nmf, get_n_top_words
 from nettoyage_donnees import get_current_df
-from settings import NB_TOPICS
+from settings import NB_TOPICS, UNINTERRESTING_WORDS
 
 
 df = get_current_df()
@@ -43,8 +43,6 @@ def select_df_by_state(state):
 
 
 def get_map_markers(df):
-    # lat_lon = [list(x) for x in list(zip(df['latitude'], df['longitude']))]
-
     markers = []
 
     for index, row in df.iterrows():
@@ -99,6 +97,9 @@ def wordcloud(df, state="all", max_words=400, save=False):
         texts = df["cleaned_texts"].values
     else:
         texts = df[df["state"] == state]["cleaned_texts"].values
+
+    # Suppression des mots qui ne sont pas interressants comme covid, coronavirus, etc
+    texts = [' '.join([word for word in str(text).split() if word not in UNINTERRESTING_WORDS]) for text in texts]
 
     if len(texts) == 0:
         texts = ["NoEntry"]
