@@ -1,6 +1,6 @@
 # AnalyTweets
 
-## Informations générales surla structure de l'application
+## Informations générales sur la structure de l'application
 
 * *data* : divers données utilisés dans le projets
 * *parm* : contient les variables d'environnement comme les clés Twitter
