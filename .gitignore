@@ -6,5 +6,4 @@
 /venv
 
 # Garder ceux-là
-!data/cleaned_resultats.csv
 !data/data_map.csv

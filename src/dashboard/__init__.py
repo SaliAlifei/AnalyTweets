@@ -18,13 +18,11 @@ import gensim.corpora as corpora
 import pyLDAvis
 import pyLDAvis.gensim_models
 
-import nltk
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
-nltk.download('punkt')
 
 stop_words = stopwords.words('english')
 lemmatizer = WordNetLemmatizer()
@@ -58,7 +56,7 @@ app.layout = html.Div([
 
         dcc.Tab(label='Topic modeling',
                 style=tab_style,
-                selected_style=selected_tab_style,
+                selected_style=topic_modelling_selected_tab_style,
                 children=[
                     topic_modelling
                 ])
@@ -76,9 +74,9 @@ app.layout = html.Div([
 )
 def update_map(value):
     if value is None:
-        return get_map_markers(get_analyse_exploratoire_df())
+        return get_map_markers(get_current_df())
     else:
-        dataframe = select_df_by_date(get_dates(get_analyse_exploratoire_df(), unique=False), value)
+        dataframe = select_df_by_date(get_dates(get_current_df(), unique=False), value)
         return get_map_markers(dataframe)
 
 
@@ -89,10 +87,10 @@ def update_map(value):
 def make_image(value):
     img = BytesIO()
     if value is None:
-        wordcloud(get_analyse_exploratoire_df()).save(img, format='PNG')
+        wordcloud(get_current_df()).save(img, format='PNG')
         return 'data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode())
     else:
-        wordcloud(get_analyse_exploratoire_df(), state=value).save(img, format='PNG')
+        wordcloud(get_current_df(), state=value).save(img, format='PNG')
         return 'data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode())
 
 
@@ -105,44 +103,8 @@ def make_image(value):
     [Input('analyze_button', 'n_clicks')],
     [State('analyze_tweet_url', 'value')])
 def on_button_click(value, url):
-    topics = get_topics_by_url(get_analyse_exploratoire_df(), url)
+    topics = get_topics_by_url(get_current_df(), url)
     return [topic.capitalize() for topic in topics]
-
-
-"""
-@app.callback(
-    Output('embed_tweet_div', 'children'),
-    [Input('analyze_button', 'n_clicks')],
-    [State('analyze_tweet_url', 'value')])
-def embed_tweet(value, url):
-    try:
-        query_url = "https://publish.twitter.com/oembed?url=" + url
-        payload = {'cards ': 'hidden',
-                   'align ': 'center',
-                   "hide_media": True,
-                   "conversation": "none",
-                   'width': 800}
-
-        response = requests.get(query_url, params=payload).json()['html']
-
-        #p, reste = response.split('dir="ltr">')[1].split("<a")
-        #a_text = reste.split('">')[1].split("</a>")[0]
-        #a_href = reste.split('href="')[1].split('">')[0]
-
-        body = dash_dangerously_set_inner_html.DangerouslySetInnerHTML(response)
-        print(body)
-
-        output = html.Blockquote(id="embed_tweet",
-                                 className="twitter-tweet",
-                                 style={"height": 800, "width": 300, "data-cards": "hidden"},
-                                 children=[
-                                     body,
-                                     dji.Import(src="https://platform.twitter.com/widgets.js")
-                                 ])
-        return output
-    except Exception as e:
-        print(e)
-"""
 
 
 # --------------------------------------------------------------------------------------
@@ -157,7 +119,8 @@ def embed_tweet(value, url):
     Input('my-checklist', 'value'),
 )
 def clean_data(techniques_selected):
-    df = get_analyse_exploratoire_df().copy()
+    # On charge le df de base
+    df = pd.read_csv("../../data/original_df.csv").loc[:1000].copy()
 
     if 'links' in techniques_selected:
         df["text"] = df["text"].apply(lambda x: re.sub(r"http\S+", "", x))
@@ -214,6 +177,10 @@ def clean_data(techniques_selected):
 
     if 'few words' in techniques_selected:
         df = df[df['text'].str.split().str.len() > 3]
+
+    # On remplace le df current par le nouveau après avoir appliqué les modifications
+    df.loc[:, "cleaned_texts"] = df["text"]
+    df.to_csv("../../data/current_df.csv")
 
     data = df.to_dict('records')
 

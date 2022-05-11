@@ -40,6 +40,8 @@ def clean_texts(texts, stop_words=stop_words, emojis=emojis):
     cleaned_texts = []
 
     for text in texts:
+        text = str(text)
+
         # Suppression des url
         text = re.sub(r'https?://\S+|www\.\S', '', text)
 
@@ -101,7 +103,7 @@ if __name__ == "__main__":
     print(f"Taille textes nettoyés : {len(cleaned_texts)}\n")
 
     df.loc[:, "cleaned_texts"] = cleaned_texts
-    df.to_csv("../../data/cleaned_resultats.csv")
+    df.to_csv("../../data/original_df.csv")
 
     """
     bow, feature_names = bag_of_words(cleaned_texts, as_array=False)
