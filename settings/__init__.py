@@ -1,6 +1,9 @@
 import os
 from dotenv import load_dotenv
 
+# Constantes
+NB_TOPICS = 10
+
 # Chemin absolu vers le fichier env_var.env de parm
 PATH_TO_ENV_FILE = "C:/Users/Salimata/Documents/Projets/AnalyTweets/parm/env_var.env"
 

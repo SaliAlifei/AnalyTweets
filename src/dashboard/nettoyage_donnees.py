@@ -1,6 +1,15 @@
 from dash import html, dash_table
 from styles import *
 from dash import dcc
+import pandas as pd
+
+
+df = pd.read_csv("../../data/current_df.csv").loc[:1000]
+
+
+def get_current_df():
+    return df
+
 
 nettoyage_donnees = html.Div(id="nettoyage_donnees_container",
                              style=nettoyage_donnees_container_style,

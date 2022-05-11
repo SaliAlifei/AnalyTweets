@@ -9,8 +9,11 @@ from wordcloud import WordCloud
 from src.scripts.tweets import get_tweet_by_id, twitter_client_authentification
 from src.scripts.preprocessing import preprocess, clean_texts
 from src.scripts.models import nmf, get_n_top_words
+from nettoyage_donnees import get_current_df
+from settings import NB_TOPICS
 
-df = pd.read_csv("../../data/cleaned_resultats.csv").loc[:500]
+
+df = get_current_df()
 
 
 def get_states():
@@ -59,10 +62,6 @@ def get_map_markers(df):
             )
         )
     return markers
-
-
-def get_analyse_exploratoire_df():
-    return df
 
 
 def get_states_pie_chart():
@@ -122,9 +121,9 @@ def get_topics_by_url(df, url):
 
     if tweet:
         # On charge le dataset
-        df = df.drop(columns=['Unnamed: 0', "Unnamed: 0.1"])
+        df = df[df.columns.drop(list(df.filter(regex='Unnamed')))]
 
-        # On nettoie le texte du tweet et on l'ajoute   à la liste
+        # On nettoie le texte du tweet et on l'ajoute à la liste
         tweet.append(clean_texts([tweet[1]])[0])
 
         # On ajoute le nouveau tweet à la fin du dataset
@@ -132,7 +131,8 @@ def get_topics_by_url(df, url):
         df.loc[tweet_index] = tweet
 
         # On lance le modèle
-        topics = 10
+        topics = NB_TOPICS
+
         x, feature_names = preprocess(df['text'])
         nmf_model, w, h = nmf(x, topics)
         result = get_n_top_words(5, nmf_model, feature_names)
