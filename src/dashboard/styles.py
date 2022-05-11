@@ -33,6 +33,12 @@ selected_tab_style = {
     "border": "none",
 }
 
+topic_modelling_selected_tab_style = {
+    "background-color": "white",
+    "color": "black",
+    "font-size": 20,
+    "border": "none",
+}
 # --------------------------------------------------------------------------------------
 # ----------------------------- Analyse Exploratoire Tab -------------------------------
 # --------------------------------------------------------------------------------------
@@ -220,5 +226,6 @@ analyse_sentiments_container_style = {
 
 topic_modelling_container_style = {
     "width": "100vw",
-    "height": "100vh"
+    "height": "100vh",
+    "background-color": "white"
 }

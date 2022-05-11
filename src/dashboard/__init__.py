@@ -58,7 +58,7 @@ app.layout = html.Div([
 
         dcc.Tab(label='Topic modeling',
                 style=tab_style,
-                selected_style=selected_tab_style,
+                selected_style=topic_modelling_selected_tab_style,
                 children=[
                     topic_modelling
                 ])
