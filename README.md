@@ -38,6 +38,7 @@ pip install -r requirements.txt
   * *TWITTER_ACCESS_TOKEN*
   * *TWITTER_ACCESS_TOKEN_SECRET*
   * *TWITTER_BEARER_TOKEN*
+* Ajoutez les données (*original_df.csv* et *current_df.csv*) dans le dossier *data*
 * Téléchargez les bibliothèques *nltk* si demandé en faisant
 
 ```
