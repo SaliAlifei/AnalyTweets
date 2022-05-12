@@ -2,10 +2,11 @@ from dash import html
 from dash import dcc
 import dash_bootstrap_components as dbc
 import pandas as pd
-from styles import *
+from src.dashboard.styles import *
+from settings import ROOT_PATH
 
 
-df = pd.read_csv("../../data/data_map.csv")
+df = pd.read_csv(ROOT_PATH + "/data/data_map.csv")
 
 
 def get_analyse_sentiments_df():

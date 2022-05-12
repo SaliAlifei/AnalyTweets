@@ -1,10 +1,11 @@
 from dash import html, dash_table
-from styles import *
+from src.dashboard.styles import *
 from dash import dcc
 import pandas as pd
+from settings import ROOT_PATH
 
 
-df = pd.read_csv("../../data/current_df.csv").loc[:1000]
+df = pd.read_csv(ROOT_PATH + "/data/current_df.csv").loc[:1000]
 
 
 def get_current_df():

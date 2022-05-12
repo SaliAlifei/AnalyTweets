@@ -1,5 +1,5 @@
 from dash import html
-from styles import *
+from src.dashboard.styles import *
 from dash import dcc
 import dash_leaflet as dl
 import plotly.graph_objs as go
@@ -9,15 +9,16 @@ from wordcloud import WordCloud
 from src.scripts.tweets import get_tweet_by_id, twitter_client_authentification
 from src.scripts.preprocessing import preprocess, clean_texts
 from src.scripts.models import nmf, get_n_top_words
-from nettoyage_donnees import get_current_df
+from src.dashboard.nettoyage_donnees import get_current_df
 from settings import NB_TOPICS, UNINTERRESTING_WORDS
+from settings import ROOT_PATH
 
 
 df = get_current_df()
 
 
 def get_states():
-    states_data = pd.read_csv("../../data/statelatlong.csv")
+    states_data = pd.read_csv(ROOT_PATH + "/data/statelatlong.csv")
     states = states_data['City']
     states_ab = states_data['state']
     return list(zip(states, states_ab))
@@ -63,7 +64,7 @@ def get_map_markers(df):
 
 
 def get_states_pie_chart():
-    states_data = pd.read_csv("../../data/statelatlong.csv")
+    states_data = pd.read_csv(ROOT_PATH + "/data/statelatlong.csv")
     states = states_data['state']
 
     df_state = df['state'].value_counts()
@@ -109,7 +110,7 @@ def wordcloud(df, state="all", max_words=400, save=False):
 
     if save:
         # saving wordcloud as image
-        wordcloud.to_file("../../data/wordcloud-state.png")
+        wordcloud.to_file(ROOT_PATH + "/data/wordcloud-state.png")
 
     return wordcloud.to_image()
 

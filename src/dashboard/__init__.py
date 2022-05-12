@@ -7,11 +7,11 @@ import contractions
 from io import BytesIO
 import base64
 
-from analyse_exploratoire import *
-from nettoyage_donnees import *
-from analyse_sentiments import *
-from topic_modelling import *
-from styles import *
+from src.dashboard.analyse_exploratoire import *
+from src.dashboard.nettoyage_donnees import *
+from src.dashboard.analyse_sentiments import *
+from src.dashboard.topic_modelling import *
+from src.dashboard.styles import *
 
 import gensim
 import gensim.corpora as corpora
@@ -372,6 +372,9 @@ def apply_lda(data, n_clicks):
     return 'assets/lda_vis.html'
 
 
+def main():
+    app.run_server(debug=False)
+
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)

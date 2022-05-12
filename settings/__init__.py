@@ -9,6 +9,7 @@ UNINTERRESTING_WORDS = ["covid", "covid19", "coronavirus", "corona", "virus", "p
 
 # Chemin absolu vers le fichier env_var.env de parm
 PATH_TO_ENV_FILE = "C:/Users/Salimata/Documents/Projets/AnalyTweets/parm/env_var.env"
+ROOT_PATH = "/".join(PATH_TO_ENV_FILE.split("/")[:-2])
 
 
 def load_env():

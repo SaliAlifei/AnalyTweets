@@ -1,12 +1,12 @@
 from dash import html
-from styles import *
+from src.dashboard.styles import *
 from dash import dcc
 import pandas as pd
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import TfidfVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-from nettoyage_donnees import get_current_df
+from src.dashboard.nettoyage_donnees import get_current_df
 from settings import NB_TOPICS
 
 
